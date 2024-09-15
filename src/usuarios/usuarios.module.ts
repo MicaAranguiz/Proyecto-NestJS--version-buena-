@@ -5,21 +5,17 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsuarioEntity } from './usuarios.entity';
 import { AuthService } from './auth/auth.service';
 import { JwtModule } from '@nestjs/jwt';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MulterModule } from '@nestjs/platform-express';
 import { saveImagesToStorage } from './helpers/image-storage';
+import { envs } from 'src/config';
 
 @Module({
   imports: [TypeOrmModule.forFeature([UsuarioEntity]),
-  JwtModule.registerAsync({
-    imports: [ConfigModule],
-    inject: [ConfigService],
-    useFactory: async (ConfigService: ConfigService) => ({
-      secret: ConfigService.get('JWT_SEED'),
-      signOptions: {
-        expiresIn: '24h'
-      },
-    }),
+  JwtModule.register({
+    secret: envs.jwt,
+    signOptions: {
+      expiresIn: '24h'
+    },
   }),
   MulterModule.register({
     dest: '/uploads',

@@ -3,22 +3,13 @@ import { AppService } from './app.service';
 import { JwtMiddleware } from './usuarios/auth/middlewares/jwt/jwt.middleware';
 import { UsuariosModule } from './usuarios/usuarios.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule } from '@nestjs/config';
+import { db } from './config/database-config';
+import { AppController } from './app.controller'
+
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
-    UsuariosModule, TypeOrmModule.forRoot({
-    type: 'mysql',
-    host: process.env.DB_HOST,
-    username: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_DATABASE,
-    entities: [],
-    autoLoadEntities: true,
-    synchronize: true,
-  }),
-    UsuariosModule],
-  controllers: [],
+  TypeOrmModule.forRoot(db),UsuariosModule],
+  controllers: [AppController], 
   providers: [AppService],
 })
 

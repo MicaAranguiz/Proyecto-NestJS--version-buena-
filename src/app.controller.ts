@@ -7,7 +7,7 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 
 
 @Controller('usuarios')
-export class UsuariosController {
+export class AppController {
   constructor (private readonly service: UsuariosService){}
 
   @Post('auth/register')
