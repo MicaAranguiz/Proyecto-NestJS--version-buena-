@@ -15,8 +15,8 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
+    it('Retorna un hola mundo"', () => {
+      expect(appController.getHello()).toBe('Hola mundo de Mica!');
     });
   });
 });

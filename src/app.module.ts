@@ -3,12 +3,21 @@ import { AppService } from './app.service';
 import { JwtMiddleware } from './usuarios/auth/middlewares/jwt/jwt.middleware';
 import { UsuariosModule } from './usuarios/usuarios.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { db } from './config/database-config';
 import { AppController } from './app.controller'
+import { db } from './config';
+import { SocketModule } from './socket/socket.module';
+import { ParcelasModule } from './alquileres/parcelas/parcelas.module';
+import { DepartamentosModule } from './alquileres/departamentos/departamentos.module';
+import { IngresosModule } from './alquileres/ingresos/ingresos.module';
+import { ReservasModule } from './alquileres/reservas/reservas.module';
 
 @Module({
   imports: [
-  TypeOrmModule.forRoot(db),UsuariosModule],
+  TypeOrmModule.forRoot(db),UsuariosModule,   SocketModule,
+  ParcelasModule,
+  DepartamentosModule,
+  IngresosModule,
+  ReservasModule],
   controllers: [AppController], 
   providers: [AppService],
 })
