@@ -23,70 +23,68 @@ export class IngresosService {
         private readonly parcelasService: ParcelasService
     ) { }
 
-    // ocupar parcela
     async ocuparParcela(usuarioId: number, parcelaId: number): Promise<IngresoDto> {
 
         const parcelaFound = await this.parcelaRepositoy.findOne({ where: { id: parcelaId } });
         const usuarioFound = await this.usuarioRepository.findOne({ where: { id: usuarioId } });
         
-        // chequear que exista la parcela y que no este ocupada
+        // controlar que exista la parcela y no esté ocupada
         if (!parcelaFound) { throw new NotFoundException(`Parcela Nro ${parcelaId} no encontrada `); }
         if (parcelaFound.ocupada) { throw new NotFoundException(`Parcela Nro ${parcelaId} ocupada`); }
 
         
-        // chequear que exista el usuario 
+        // para ver si el usuario existe
         if (!usuarioFound) throw new NotFoundException(`Usuario Nro ${usuarioId} no encontrado`);
 
         const ingreso = this.ingresoRepository.create(
             {
-                // cargar el usuario
+                // carga el nuevo usuario
                 usuario: usuarioFound,
                 // cargar la parcela
                 parcela: parcelaFound,
-                // cargar la fecha actual en ingresos/entrada
+                // cargar la fecha de hoy
                 entrada: new Date(),
                 salida: null,
             }
         )
-        // si hay ingreso, entonces cambiar a true la ocupacion parcela/ocupacion
+        // si alguien ingresa, cambiar a true
         if (ingreso) this.parcelasService.update(parcelaId)
 
         return this.ingresoRepository.save(ingreso)
 
     }
 
-    // desocupar parcela
+    // parcela desocupada
     async desocuparParcela(parcelaId: number, usuarioId: number, ingresoId: number): Promise<IngresoDto> {
 
         const parcelaFound = await this.parcelaRepositoy.findOne({ where: { id: parcelaId } });
-        // chequear que exista la parcela y que este ocupada
+        // se consulta si la parcela existe
         if (!parcelaFound) { throw new NotFoundException(`Parcela no encontrada ${parcelaId}`); }
         if (!parcelaFound.ocupada) { throw new NotFoundException(`Parcela ${parcelaId} no esta ocupada`); }
 
-         // chequear que exista el ingreso
+         // se consulta si existe el ingreso
        const ingresoEnCuestion = await this.ingresoRepository.findOne({ where: { id: ingresoId }, relations: ['usuario', 'parcela'] })
        if (!ingresoEnCuestion)  throw new NotFoundException(`Ingreso no encontrado ${ingresoId}`)
         
         const usuarioFound =await this.usuarioRepository.findOne({ where: { id: usuarioId } });
 
-        // chequear que exista el usuario 
+        // se consulta si existe el usuario
         if (!usuarioFound) throw new NotFoundException('Usuario no encontrado');
 
-        //chequea que la parcela del registro coincida con la ingresada
+        //se consulta si la parcela del registro coincida con la ingresada
         if (ingresoEnCuestion.parcela.id !== parcelaId) {
             throw new NotFoundException(
                 `La parcela ${parcelaId} no esta en el registro ${ingresoId}`); }
 
-        //chequea que el usuario del registro coincida con el ingresad
+        // se revisa que el usuario del registro coincida con el ingresad
         if (ingresoEnCuestion.usuario.id !== usuarioId) {
             throw new NotFoundException(
                 `El usuario ${usuarioId} no esta en el registro ${ingresoId}`); }
 
         
        const salir = (ingresoEnCuestion.usuario.id == usuarioId && ingresoEnCuestion.parcela.id == parcelaId)
-       //const salir = true
-
-        // si hay una desocupacion 
+    
+        // si está desocupado
         if (salir) {
             //cambiar a false la ocupacion parcela/ocupacion
             this.parcelasService.downgrade(parcelaId)
@@ -100,7 +98,7 @@ export class IngresosService {
 
         try {
             const salida = await this.ingresoRepository.findOne({ where: { id: parcelaId } });
-            if (!salida) throw new NotFoundException('no encontramos ninguna parcela con ese id')
+            if (!salida) throw new NotFoundException('No tenemos registro de ninguna parcela con ese ID')
             await this.ingresoRepository.update(parcelaId, { salida: new Date() });
             return salida;
 
@@ -118,7 +116,7 @@ export class IngresosService {
     async getOne(id: number): Promise<IngresoDto> {
         try {
             const ingreso = await this.ingresoRepository.findOne({ where: { id } , relations: ['usuario', 'parcela']});
-            if (!ingreso) throw new NotFoundException('no encontramos ninguna parcela con ese id')
+            if (!ingreso) throw new NotFoundException('No tenemos registro de ninguna parcela con ese ID')
             return ingreso;
         } catch (err) {
             console.error(err)
@@ -142,7 +140,7 @@ export class IngresosService {
                 relations: ['usuario', 'parcela']
             })
             const ingreso = await this.ingresoRepository.find();
-            if (!ingreso) throw new NotFoundException('no encontramos ninguna parcela')
+            if (!ingreso) throw new NotFoundException('No encontramos ninguna parcela disponible')
             return { data: ingresos, total, page, limit };
         } catch (err) {
             console.error(err)
