@@ -4,12 +4,12 @@ import { QueryFailedError, Repository } from 'typeorm';
 import { UsuarioDto } from './usuarios.dto';
 import { AuthService } from './auth/auth.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UsuariosEntity } from './usuarios.entity';
+import { Usuarios } from './usuarios.entity';
 
 @Injectable()
 export class UsuariosService {
     constructor(
-        @InjectRepository(UsuariosEntity) private readonly repo: Repository<UsuarioDto>,) { }
+        @InjectRepository(Usuarios) private readonly repo: Repository<UsuarioDto>,) { }
     private readonly authService: AuthService
     async register(usuario: UsuarioDto) {
         try {

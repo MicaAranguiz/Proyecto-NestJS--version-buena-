@@ -6,7 +6,7 @@ export enum Role {
 }
 
 @Entity('usuarios')
-export class UsuariosEntity {
+export class Usuarios {
     @PrimaryGeneratedColumn('increment')
     id: number;
 
