@@ -1,9 +1,5 @@
-import { IsString } from "class-validator"
+import { IsBoolean, IsEmail, IsOptional, IsString, } from "class-validator";
 
-export class DepartamentoDto {
+export class DepartamentosDto {
 
-    id: number
-
-    @IsString()
-    nombre: string
 }

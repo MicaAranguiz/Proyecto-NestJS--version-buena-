@@ -1,143 +1,67 @@
 import { HttpException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Usuarios } from './usuarios.entity';
 import { QueryFailedError, Repository } from 'typeorm';
 import { UsuarioDto } from './usuarios.dto';
 import { AuthService } from './auth/auth.service';
-import { PaginationQueryDto } from 'src/common/paginator/paginator.dto';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UsuariosEntity } from './usuarios.entity';
 
 @Injectable()
 export class UsuariosService {
-  constructor(
-    @InjectRepository(Usuarios) private readonly repo: Repository<UsuarioDto>,
+    constructor(
+        @InjectRepository(UsuariosEntity) private readonly repo: Repository<UsuarioDto>,) { }
     private readonly authService: AuthService
-  ) { }
+    async register(usuario: UsuarioDto) {
+        try {
+            if (!usuario.password) throw new UnauthorizedException("No es contraseña");
+            const hash = await this.authService.hashPassword(usuario.password)
+            usuario.password = hash;
 
-  async register(usuario: UsuarioDto) {
-    try {
-      //! The hash fails if doesn't exist the string
-      if (!usuario.password) throw new UnauthorizedException('No es una password');
-
-      const hash = await this.authService.hashPassword(usuario.password);
-      usuario.password = hash
-
-      const result = await this.repo.save(usuario);
-      return result;
-    } catch (err: any) {
-      console.log(err)
-      if (err instanceof QueryFailedError)
-        throw new HttpException(`${err.name} ${err.driverError}`, 404);
-      throw new HttpException(err.message, err.status);
+            const result = await this.repo.save(usuario);
+            return result;
+        } catch (err: any) {
+            console.error(err);
+            if (err instanceof QueryFailedError)
+                throw new HttpException(`${err.name} ${err.driverError}`, 404);
+            throw new HttpException(err.message, err.status);
+        }
     }
-  }
+    async getOne(id: number): Promise<UsuarioDto> {
+        try {
+            const usuario = await this.repo.findOne({ where: { id } });
 
-  async login(email: string, pass: string) {
-    try {
-      const user = await this.repo.findOne({ where: { email } });
-      console.log(user);
+            if (!usuario) throw new NotFoundException('Usuario no encontrado');
 
-      if (!user) throw new NotFoundException('Usuario no encontrado');
-
-      const isPassword = await this.authService.comparePassword(
-        pass,
-        user.password,
-      );
-
-      if (!isPassword) throw new UnauthorizedException('Contraseña incorrecta');
-
-      const token = await this.authService.generateJwt(user);
-
-      return token;
-    } catch (err) {
-      console.error(err);
-      if (err instanceof QueryFailedError)
-        throw new HttpException(`${err.name} ${err.driverError}`, 404);
-      throw new HttpException(err.message, err.status);
+            return usuario;
+        }
+        catch (err) {
+            console.log(err);
+            if (err instanceof QueryFailedError)
+                throw new HttpException(`${err.name} ${err.driverError}`, 404);
+            throw new HttpException(err.message, err.status);
+        }
     }
-  }
+    async updateUser(
+        id: number,
+        user: Partial<UsuarioDto>,
+        files: Express.Multer.File[],
+    ) {
+        try {
+            if (files.length > 0) {
+                user.avatar = files[0].filename;
+            }
+            const oldUser = await this.getOne(id);
 
-  /**
-   * @description Obtiene el usuario
-   * @param id ID  del usuario
-   * @returns UsuarioDTO
-   */
-  async getOne(id: number): Promise<UsuarioDto> {
-    try {
-      const usuario = await this.repo.findOne({ where: { id } })
+            const mergeUser = await this.repo.merge(oldUser, user);
 
-      if (!usuario) throw new NotFoundException('Usuario no encontrado')
+            const result = await this.repo.save(mergeUser);
 
-      return usuario
-    } catch (err) {
-      console.error(err)
-      if (err instanceof QueryFailedError)
-        throw new HttpException(`${err.name} ${err.driverError}`, 404);
-      throw new HttpException(err.message, err.status)
+            return result;
+        } catch (err) {
+            if (err instanceof QueryFailedError)
+                throw new HttpException(`${err.name} ${err.driverError}`, 404);
+            throw new HttpException(err.message, err.status);
+        }
     }
-  }
 
-  
-  async getAll(paginationQuery: PaginationQueryDto): Promise<{
-    data: UsuarioDto[];
-    total: number;
-    page: number;
-    limit: number;
-  }> {
-
-    const {page = 1, limit = 10} = paginationQuery;
-
-    try {
-      
-      const [usuarios, total] = await this.repo.findAndCount({
-        skip: (page - 1) * limit,
-        take: limit
-      })
-
-      if (!usuarios) throw new NotFoundException('No se encontraron los usuarios')
-
-      return {data: usuarios, total, page, limit}
-
-    } catch (err) {
-      console.error(err)
-      if (err instanceof QueryFailedError)
-        throw new HttpException(`${err.name} ${err.driverError}`, 404);
-      throw new HttpException(err.message, err.status)
-    }
-  }
-  async delete(id: number): Promise<UsuarioDto> {
-    try {
-      const user = await this.repo.findOne({ where: { id } })//busca a el usuario por id
-      const usuario = await this.repo.remove(user)
-      return usuario
-                
-    } catch (err) {
-      console.error(err)
-      if (err instanceof QueryFailedError)
-        throw new HttpException(`${err.name} ${err.driverError}`, 404);
-      throw new HttpException(err.message, err.status)
-    }
-  }
-  async updateUser(
-    id: number,
-    user: Partial<UsuarioDto>,
-    files: Express.Multer.File[],
-  ) {
-    try {
-      if (files.length > 0) {
-        user.avatar = files[0].filename;
-      }
-      const oldUser = await this.getOne(id);
-
-      const mergeUser = await this.repo.merge(oldUser, user);
-
-      const result = await this.repo.save(mergeUser);
-
-      return result;
-    } catch (err) {
-      console.error(err);
-      if (err instanceof QueryFailedError)
-        throw new HttpException(`${err.name} ${err.driverError}`, 404);
-      throw new HttpException(err.message, err.status);
-    }
-  }
 }

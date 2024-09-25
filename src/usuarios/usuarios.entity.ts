@@ -1,7 +1,12 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
+export enum Role {
+    ADMIN = "ADMIN",
+    USER = "USER"
+}
+
 @Entity('usuarios')
-export class Usuarios {
+export class UsuariosEntity {
     @PrimaryGeneratedColumn('increment')
     id: number;
 
@@ -19,4 +24,11 @@ export class Usuarios {
 
     @Column({ type: 'varchar', nullable: false, length: 255})
     avatar: string;
+
+    @Column({ // definimos la opcion de los roles
+        type: 'enum',
+        enum: Role,
+        default: Role.USER
+    })
+    role: Role;
 }
