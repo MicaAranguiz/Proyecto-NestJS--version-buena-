@@ -22,12 +22,12 @@ export class Reservas {
 
     //quien va a ingresar
     @ManyToOne(() => Usuarios, usuario => usuario.id)
-    @JoinColumn({ name: 'userId' })
+    @JoinColumn({ name: 'usuarioId' })
     usuario: Usuarios;
 
     //a que depto
     @ManyToOne(() => Departamentos, departamento => departamento.id)
-    @JoinColumn({ name: 'deptoId' })
+    @JoinColumn({ name: 'departamentoId' })
     departamento: Departamentos;
 
     //el administrador va a indicar el estado en que se encuentra y se encarga de aprobar o rechazar
@@ -37,4 +37,7 @@ export class Reservas {
         default: Estado.PENDING
     })
     estado: Estado;
+    userId: any;
 }
+
+

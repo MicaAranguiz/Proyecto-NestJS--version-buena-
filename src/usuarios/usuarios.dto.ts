@@ -1,4 +1,4 @@
-import { IsBoolean, IsEmail, IsOptional, IsString, } from "class-validator";
+import { IsBoolean, IsEmail, IsNotEmpty, IsOptional, IsString, } from "class-validator";
 
 export class UsuarioDto {
     id: number;
@@ -19,4 +19,14 @@ export class UsuarioDto {
     @IsString()
     avatar: string;
 
+    @IsNotEmpty()
+    usuarioOcupado: boolean;
+
+    @IsNotEmpty()
+    deptoOcupado: boolean;
+
+    @IsNotEmpty()
+    departamento: UsuarioDto;
+
+   
 }

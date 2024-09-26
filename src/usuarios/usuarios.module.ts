@@ -26,6 +26,6 @@ MulterModule.register({
 ],
   controllers: [UsuariosController],
   providers: [UsuariosService, AuthService],
-  exports: [AuthService, UsuariosService]
+  exports: [AuthService, UsuariosService, TypeOrmModule]
 })
 export class UsuariosModule {}

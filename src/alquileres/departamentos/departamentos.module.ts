@@ -1,9 +1,13 @@
 import { Module } from '@nestjs/common';
-import { DepartamentosService } from './departamentos.service';
 import { DepartamentosController } from './departamentos.controller';
+import { DepartamentosService } from './departamentos.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Departamentos } from './departamentos.entity';
 
 @Module({
-  providers: [DepartamentosService],
-  controllers: [DepartamentosController]
+  //este metodo hace que se de de alta en la base de datos
+  imports: [TypeOrmModule.forFeature([Departamentos])],
+  controllers: [DepartamentosController],
+  providers: [DepartamentosService]
 })
-export class DepartamentosModule {}
+export class DepartamentosModule { }

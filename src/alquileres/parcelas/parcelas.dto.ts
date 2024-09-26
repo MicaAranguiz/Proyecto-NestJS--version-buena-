@@ -11,4 +11,8 @@ export class ParcelasDto {
 
     @IsNotEmpty()
     ocupada: boolean;
+
+    @IsNotEmpty()   
+    codigoIngreso: string; // Código único para el ingreso
+
 }           

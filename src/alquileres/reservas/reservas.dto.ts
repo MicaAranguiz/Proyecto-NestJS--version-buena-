@@ -8,10 +8,10 @@ export class ReservasDto {
     id: number;
 
     @IsOptional()
-    desde: Date;
+    diadesde: Date;
 
     @IsOptional()
-    hasta: Date;
+    diahasta: Date;
 
     @IsNotEmpty() // no debe ser vacio
     @IsNotEmpty()
@@ -22,5 +22,6 @@ export class ReservasDto {
 
     @IsNotEmpty() // no debe ser vacio
     estado: Estado;
+    userId: any;
 
 }

@@ -1,9 +1,5 @@
 import { OnModuleInit, UnauthorizedException } from '@nestjs/common';
-import {
-  SubscribeMessage,
-  WebSocketGateway,
-  WebSocketServer
-} from '@nestjs/websockets';
+import { SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { AuthService } from 'src/usuarios/auth/auth.service';
 import { SocketService } from './socket.service';
@@ -23,22 +19,23 @@ export class SocketGateway implements OnModuleInit {
     this.server.on('connection', async (socket: Socket) => {
 
       try {
-        //verificamos el token para poder obtener la info
+        //nos encargamos de verificar el token para obtener/brindar la informacion
         const payload = await this.auth.verifyJwt(
           socket.handshake.headers.authorization,
         );
 
         console.log(
-          `usuario conectado con id: ${socket.id}`,
+          `El usuario se encuentra conectado con el id: ${socket.id}`,
           socket.handshake.headers['usuario'],
         );
 
-        //damos un buen mensaje de bienvenida
+        //damos un mensaje de bienvenida al comenzar
         this.server.emit(
-          'welcome-message',
-          `bienvenido a nuestro servidor usuario ${socket.id}`
+          'Mensaje de bienvenida',
+          `bienvenido a nuestro servidor ${socket.id}`
         )
-        //mandamos informacion de nuestro usuario al servicio
+
+        //le brindamos al servicio la informacion sobre el usuario
         this.socketService.onConnection(socket, payload);
 
         const socketUsuario = this.socketService.getSocket(
@@ -46,7 +43,7 @@ export class SocketGateway implements OnModuleInit {
         );
         if (socketUsuario) {
           socketUsuario.socket.emit(
-            `el usuario: ${payload.nombre} se ha conectado`,
+            `El usuario: ${payload.nombre} se ha conectado exitosamente`,
             console.log(payload.nombre)
           );
         }
@@ -56,17 +53,19 @@ export class SocketGateway implements OnModuleInit {
           //si se desconecta se elimina al usuario 
           this.socketService.onDisconnection(socket);
         });
+
       } catch (error) {
-        //en caso de que se genere error se debe desconectar:
+        //Si se llega a generar un error se debe desconectar
         socket.disconnect();
-        //mensaje de informacion
-        throw new UnauthorizedException(' La informacion ha incorrecta')
+
+        //Mensaje relacionado a la información
+        throw new UnauthorizedException(' La informacion es incorrecta')
       }
     });
   }
   @SubscribeMessage('message')
   handleMessage(client: any, payload: any): string {
-    return 'Buenas user!';
+    return '¡Bienvenido!';
   }
 }
 

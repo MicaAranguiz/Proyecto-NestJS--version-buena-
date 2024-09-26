@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Usuarios } from "src/usuarios/usuarios.entity";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('departamentos')
 export class Departamentos {
@@ -7,11 +8,17 @@ export class Departamentos {
     id: number;
 
     //el respectivo nombre del departamento
-    @Column ({type: 'varchar', nullable: true})
+    @Column({ type: 'varchar', nullable: true })
     nombre: string;
 
     //descripcion del departamento
-    @Column ({type: 'varchar', nullable: true})
+    @Column({ type: 'varchar', nullable: true })
     descripcion: string;
+
+    @Column({ type: 'boolean', default: false })
+    deptoOcupado: boolean;
+    
+    // @ManyToOne(() => Usuarios, usuario => usuario.departamentos)
+    // usuario: Usuarios;
 
 }

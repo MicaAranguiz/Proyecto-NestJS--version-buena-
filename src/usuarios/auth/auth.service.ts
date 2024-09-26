@@ -4,9 +4,13 @@ import * as bcrypt from 'bcrypt';
 import { UsuarioDto } from "../usuarios.dto";
 import { QueryFailedError } from "typeorm";
 import { Response } from 'express';
+import { Role } from "../usuarios.entity";
 
 @Injectable()
 export class AuthService {
+    verificarRol(ADMIN: Role, token: string) {
+       throw new Error('Method not implemented.');
+    }
 
     constructor(private jwtService: JwtService) { }
     /** 

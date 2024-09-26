@@ -7,42 +7,35 @@ export class SocketService {
 
     /**
      * @description
-     * Almacenamos usuarios conectados
+     * Almacenamos los usuarios conectados
      */
     private clients: { [key: string]: { socket: Socket; payload: Payload } } = {};
 
-/**
-     * @description
-     * obtenemos un socket a traves de un id de un usuario
-     */
-getSocket(id: number) {
-    //recorremos la lista 
-    for (let key in this.clients) {
-        //retornamos el valor
-        if (this.clients[key].payload.sub == id) return this.clients[key];
-        //si no existe, nulo
-        else return null
+    /**
+         * @description
+         * obtenemos un socket a traves de un id de un usuario
+         */
+    getSocket(id: number) {
+        //recorremos la lista de los usuarios
+        for (let key in this.clients) {
+
+            //brindamos el valor
+            if (this.clients[key].payload.sub == id) return this.clients[key];
+
+            //si no llegara a existir, retornamos un nulo
+            else return null
+        }
     }
-}
-
-
     /**
      * @description
-     * Almacenamos el socket del usuario identificando por id unico generado
+     * Almacenamos el socket del usuario , lo identificamos por el ID unico que le fue asignado
      */
     onConnection(socket: Socket, payload: Payload) {
         this.clients[socket.id] = { socket: socket, payload: payload };
-
-        
     }
-
-    
-
-    
-
     /**
      * @description
-     * Una vez desconectado, se elimina de la lista
+     * Cuando se desconecte, se borra
      */
     onDisconnection(socket: Socket) {
         delete this.clients[socket.id];

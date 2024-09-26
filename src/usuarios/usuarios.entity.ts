@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Departamentos } from "src/alquileres/departamentos/departamentos.entity";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 export enum Role {
     ADMIN = "ADMIN",
@@ -13,22 +14,23 @@ export class Usuarios {
     @Column({ type: 'varchar', nullable: true, length: 255 })
     nombre: string;
 
-    @Column({ type: 'varchar', nullable: false, unique: true, length: 255})
+    @Column({ type: 'varchar', nullable: false, unique: true, length: 255 })
     email: string;
 
-    @Column({ type: 'varchar', nullable: false, length: 255})
+    @Column({ type: 'varchar', nullable: false, length: 255 })
     password: string;
 
-    @Column({ type:'bool', default:true })
+    @Column({ type: 'bool', default: true })
     isActive: boolean;
 
-    @Column({ type: 'varchar', nullable: false, length: 255})
+    @Column({ type: 'varchar', nullable: false, length: 255 })
     avatar: string;
-
+    
     @Column({ // definimos la opcion de los roles
         type: 'enum',
         enum: Role,
         default: Role.USER
     })
     role: Role;
+
 }
