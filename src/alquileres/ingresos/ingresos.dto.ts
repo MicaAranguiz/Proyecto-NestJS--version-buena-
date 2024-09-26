@@ -1,6 +1,7 @@
 import { IsBoolean, IsEmail, IsNotEmpty, IsOptional, IsString, } from "class-validator";
-import { Usuarios } from "src/usuarios/usuarios.entity";
-import { Parcelas } from "../parcelas/parcelas.entity";
+import { ParcelasDto } from "../parcelas/parcelas.dto";
+import { UsuarioDto } from "src/usuarios/usuarios.dto";
+
 
 export class IngresosDto {
   
@@ -13,9 +14,8 @@ export class IngresosDto {
     diasalida: Date
 
     @IsNotEmpty()
-    usuario: Usuarios;
-    
-    @IsNotEmpty()
-    parcela: Parcelas;
+    usuario: UsuarioDto;
 
+    @IsNotEmpty()
+    parcela: ParcelasDto
 }

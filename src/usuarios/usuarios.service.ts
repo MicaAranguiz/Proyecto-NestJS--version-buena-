@@ -5,6 +5,7 @@ import { UsuarioDto } from './usuarios.dto';
 import { AuthService } from './auth/auth.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Usuarios } from './usuarios.entity';
+import { PaginationQueryDto } from 'src/common';
 
 @Injectable()
 export class UsuariosService {
@@ -64,6 +65,47 @@ export class UsuariosService {
             if (err instanceof QueryFailedError)
                 throw new HttpException(`${err.name} ${err.driverError}`, 404);
             throw new HttpException(err.message, err.status);
+        }
+    }
+    //?page=1&limit=1 para pasarle limites de pagina y cantidad de usuarios a travez del endpoint
+    async getAll(paginationQuery: PaginationQueryDto): Promise<{
+        data: UsuarioDto[];
+        total: number;
+        page: number;
+        limit: number;
+    }> {
+
+        const { page = 1, limit = 10 } = paginationQuery;
+
+        try {
+
+            const [usuarios, total] = await this.repo.findAndCount({
+                skip: (page - 1) * limit,
+                take: limit
+            })
+
+            if (!usuarios) throw new NotFoundException('no hay usuarios encontrados')
+
+            return { data: usuarios, total, page, limit }
+
+        } catch (err) {
+            console.error(err)
+            if (err instanceof QueryFailedError)
+                throw new HttpException(`${err.name} ${err.driverError}`, 404);
+            throw new HttpException(err.message, err.status)
+        }
+    }
+    async delete(id: number): Promise<UsuarioDto> {
+        try {
+            const user = await this.repo.findOne({ where: { id } }) //busca a el usuario por id
+            const usuario = await this.repo.remove(user)
+            return usuario
+
+        } catch (err) {
+            console.error(err)
+            if (err instanceof QueryFailedError)
+                throw new HttpException(`${err.name} ${err.driverError}`, 404);
+            throw new HttpException(err.message, err.status)
         }
     }
 

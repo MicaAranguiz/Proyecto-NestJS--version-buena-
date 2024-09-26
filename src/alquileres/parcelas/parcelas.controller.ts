@@ -7,16 +7,17 @@ import { Response } from 'express';
 export class ParcelasController {
     constructor(private readonly service: ParcelasService) { }
 
-    @Get(':id')
-    async getOne(@Param('id') id: number, @Res() response: Response) {
-        const parcela = await this.service.getOne(id);
-        response.status(HttpStatus.OK).json({ ok: true, parcela, msg: 'Aprobado' })
-    }
+    //para buscar todas las parcelas de la coleccion
     @Get('/')
-    async getAll(@Query() paginationQuery: PaginationQueryDto, @Res() response: Response) {
+    async buscaTodo(@Query() paginationQuery: PaginationQueryDto, @Res() response: Response) {
         const parcelas = await this.service.getAll(paginationQuery);
         response.status(HttpStatus.OK).json({ ok: true, parcelas, msg: 'Aprobado' })
     }
-
+    //paara buscar parcelas por id
+    @Get(':id')
+    async buscaPorId(@Param('id') id: number, @Res() response: Response) {
+        const parcela = await this.service.getOne(id);
+        response.status(HttpStatus.OK).json({ ok: true, parcela, msg: 'Aprobado' })
+    }
 }
 

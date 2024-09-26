@@ -10,7 +10,7 @@ export class ParcelasDto {
     descripcion: string;
 
     @IsNotEmpty()
-    ocupada: boolean;
+    parcelaOcupada: boolean;
 
     @IsNotEmpty()   
     codigoIngreso: string; // Código único para el ingreso

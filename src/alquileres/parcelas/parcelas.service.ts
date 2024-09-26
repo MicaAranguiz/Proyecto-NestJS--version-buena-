@@ -61,4 +61,43 @@ export class ParcelasService {
         }
 
     }
+
+    //actualiza el valor de parcelaOcupada a true
+    //tomamos como valor el ID
+    async actualizaVacia(id: number) {
+
+        try {
+            const parcelaVacia = await this.parcelaRepository.findOne({ where: { id } });
+            if (!parcelaVacia) throw new NotFoundException('No encontramos ninguna parcela con el id ${id}')
+            //actualiza el valor y pone la parcela en ocupada= false
+            await this.parcelaRepository.update(parcelaVacia, { parcelaOcupada: false });
+            return parcelaVacia;
+        }
+        //En caso de error, hace esto
+        catch (err) {
+            console.error(err);
+            if (err instanceof QueryFailedError)
+                throw new HttpException(`${err.name} ${err.driverError}`, 404);
+            throw new HttpException(err.message, err.status);
+        }
+    }
+    //actualiza el valor de parcelaOcupada a true
+    //tomamos como parametro el id 
+    async actualizaOcupada(id: number) {
+
+        try {
+            const parcelaActualiza = await this.parcelaRepository.findOne({ where: { id } });
+            if (!parcelaActualiza) throw new NotFoundException(`No encontramos ninguna parcela con el id ${id}`)
+            //actualiza el valor y pone la parcela en ocupada= true
+            await this.parcelaRepository.update(parcelaActualiza, { parcelaOcupada: true });
+            return parcelaActualiza;
+        }
+        //En caso de error, hace esto
+        catch (err) {
+            console.error(err);
+            if (err instanceof QueryFailedError)
+                throw new HttpException(`${err.name} ${err.driverError}`, 404);
+            throw new HttpException(err.message, err.status);
+        }
+    }
 }
