@@ -13,5 +13,7 @@ export class DepartamentosDto {
     @IsNotEmpty()
     deptoOcupado: boolean;
 
+    departamento: DepartamentosDto;
+
    
 }

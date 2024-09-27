@@ -17,7 +17,7 @@ export class ParcelasService {
     ) { }
 
     // vamos a buscar una parcela en especifico, tomando por el ID
-    async getOne(id: number): Promise<ParcelasDto> {
+    async buscaPorId(id: number): Promise<ParcelasDto> {
         try {
             //definimos que la parcela se obtiene por el ID
             const buscaParcela = await this.parcelaRepository.findOne({ where: { id } });
@@ -37,7 +37,7 @@ export class ParcelasService {
 
 
     //paginador para mostrar la informacion de las parcelas y quienes las o
-    async getAll(paginationQuery: PaginationQueryDto): Promise<{
+    async buscaTodo(paginationQuery: PaginationQueryDto): Promise<{
         data: ParcelasDto[];
         total: number;
         page: number;

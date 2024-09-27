@@ -1,10 +1,9 @@
-import { IsBoolean, IsEmail, IsNotEmpty, IsOptional, IsString, } from "class-validator";
+import { IsNotEmpty, IsOptional } from "class-validator";
 import { UsuarioDto } from "src/usuarios/usuarios.dto";
 import { DepartamentosDto } from "../departamentos/departamentos.dto";
 import { Estado } from "./reservas.entity";
 
 export class ReservasDto {
-
     id: number;
 
     @IsOptional()
@@ -13,15 +12,14 @@ export class ReservasDto {
     @IsOptional()
     diahasta: Date;
 
-    @IsNotEmpty() // no debe ser vacio
-    @IsNotEmpty()
+    @IsNotEmpty() 
     usuario: UsuarioDto;
 
-    @IsNotEmpty() // no debe ser vacio
+    @IsNotEmpty() 
     departamento: DepartamentosDto;
 
-    @IsNotEmpty() // no debe ser vacio
+    @IsNotEmpty() 
     estado: Estado;
-    userId: any;
 
+    userId: number;
 }

@@ -9,12 +9,12 @@ export class UsuariosController {
     constructor(private readonly usuarioService: UsuariosService) { }
     @Get(':id')
     async getOne(@Param('id') id: number, @Res() res: Response) {
-        const usuario = await this.usuarioService.getOne(id);
+        const usuario = await this.usuarioService.buscaUno(id);
         res.status(HttpStatus.OK).json({ ok: true, usuario, msg: 'Aprobado' });
     }
-    @Get('/')
+    @Get()
     async getAll(@Query() paginationQuery: PaginationQueryDto, @Res() res: Response) {
-        const usuario = await this.usuarioService.getAll(paginationQuery);
+        const usuario = await this.usuarioService.buscaTodo(paginationQuery);
         res.status(HttpStatus.OK).json({ ok: true, usuario, msg: 'Aprobado' });
     }
     @Delete(':id')

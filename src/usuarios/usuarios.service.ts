@@ -9,6 +9,10 @@ import { PaginationQueryDto } from 'src/common';
 
 @Injectable()
 export class UsuariosService {
+    usuariosRepository: any;
+    async findByEmail(email: string): Promise<Usuarios | undefined> {
+        return this.usuariosRepository.findOne({ where: { email } });
+    }
     findOne(usuarioId: number) {
         throw new Error('Method not implemented.');
     }
@@ -30,7 +34,7 @@ export class UsuariosService {
             throw new HttpException(err.message, err.status);
         }
     }
-    async getOne(id: number): Promise<UsuarioDto> {
+    async buscaUno(id: number): Promise<UsuarioDto> {
         try {
             const usuario = await this.repo.findOne({ where: { id } });
 
@@ -54,7 +58,7 @@ export class UsuariosService {
             if (files.length > 0) {
                 user.avatar = files[0].filename;
             }
-            const oldUser = await this.getOne(id);
+            const oldUser = await this.buscaUno(id);
 
             const mergeUser = await this.repo.merge(oldUser, user);
 
@@ -67,27 +71,21 @@ export class UsuariosService {
             throw new HttpException(err.message, err.status);
         }
     }
-    //?page=1&limit=1 para pasarle limites de pagina y cantidad de usuarios a travez del endpoint
-    async getAll(paginationQuery: PaginationQueryDto): Promise<{
+
+    async buscaTodo(paginationQuery: PaginationQueryDto): Promise<{
         data: UsuarioDto[];
         total: number;
         page: number;
         limit: number;
     }> {
-
         const { page = 1, limit = 10 } = paginationQuery;
-
         try {
-
             const [usuarios, total] = await this.repo.findAndCount({
                 skip: (page - 1) * limit,
                 take: limit
             })
-
             if (!usuarios) throw new NotFoundException('no hay usuarios encontrados')
-
             return { data: usuarios, total, page, limit }
-
         } catch (err) {
             console.error(err)
             if (err instanceof QueryFailedError)
@@ -106,7 +104,7 @@ export class UsuariosService {
             if (err instanceof QueryFailedError)
                 throw new HttpException(`${err.name} ${err.driverError}`, 404);
             throw new HttpException(err.message, err.status)
-        }
-    }
-
+        } 
+     }
+    
 }

@@ -25,12 +25,13 @@ export class Reservas {
     @JoinColumn({ name: 'usuarioId' })
     usuario: Usuarios;
 
-    //a que depto
+    //a que departamento ingresa
     @ManyToOne(() => Departamentos, departamento => departamento.id)
     @JoinColumn({ name: 'departamentoId' })
     departamento: Departamentos;
 
     //el administrador va a indicar el estado en que se encuentra y se encarga de aprobar o rechazar
+    // quedó en proceso
     @Column({
         type: 'enum',
         enum: Estado,

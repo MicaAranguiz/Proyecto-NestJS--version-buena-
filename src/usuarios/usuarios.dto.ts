@@ -1,12 +1,15 @@
 import { IsBoolean, IsEmail, IsNotEmpty, IsOptional, IsString, } from "class-validator";
 
 export class UsuarioDto {
+    
+    @IsNotEmpty()
     id: number;
 
+    @IsNotEmpty()
     @IsString()
     nombre: string;
 
-    @IsEmail()
+      @IsEmail()
     email: string;
 
     @IsString()

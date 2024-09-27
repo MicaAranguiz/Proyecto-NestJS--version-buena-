@@ -25,7 +25,7 @@ export const saveImagesToStorage = (destination) => {
         },
     };
 };
-
+     
 export const removeFile = (fullFilePath: string) => {
     try {
         fs.unlinkSync(fullFilePath);

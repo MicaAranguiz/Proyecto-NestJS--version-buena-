@@ -10,13 +10,13 @@ export class ParcelasController {
     //para buscar todas las parcelas de la coleccion
     @Get('/')
     async buscaTodo(@Query() paginationQuery: PaginationQueryDto, @Res() response: Response) {
-        const parcelas = await this.service.getAll(paginationQuery);
+        const parcelas = await this.service.buscaTodo(paginationQuery);
         response.status(HttpStatus.OK).json({ ok: true, parcelas, msg: 'Aprobado' })
     }
-    //paara buscar parcelas por id
+    //paara buscar parcelas por id 
     @Get(':id')
     async buscaPorId(@Param('id') id: number, @Res() response: Response) {
-        const parcela = await this.service.getOne(id);
+        const parcela = await this.service.buscaPorId(id);
         response.status(HttpStatus.OK).json({ ok: true, parcela, msg: 'Aprobado' })
     }
 }
